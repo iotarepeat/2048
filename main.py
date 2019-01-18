@@ -8,6 +8,8 @@ class Main:
 		self.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 		self.root = tk.Tk()
 		self.root.bind("<KeyPress>", self.key)
+		self.puzzle = tk.Frame(self.root)
+		self.puzzle.grid()
 		self.color = {
 			0:"#fff",
 		    2: "#eee4da",
@@ -71,7 +73,7 @@ class Main:
 		for i in range(len(self.board)):
 			for j in range(len(self.board)):
 				tk.Label(
-				    self.root,
+				    self.puzzle,
 				    text=self.board[i][j] if self.board[i][j] else None,
 					bg=self.color[self.board[i][j]],
 				    height=5,
@@ -79,7 +81,7 @@ class Main:
 				    borderwidth=2,
 				    relief="ridge").grid(
 				        row=i, column=j)
-		self.root.update()
+		self.puzzle.update()
 
 	def spawn(self):
 		'''
