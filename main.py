@@ -8,6 +8,20 @@ class Main:
 		self.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 		self.root = tk.Tk()
 		self.root.bind("<KeyPress>", self.key)
+		self.color = {
+			0:"#fff",
+		    2: "#eee4da",
+		    4: "#ede0c8",
+		    8: "#f2b179",
+		    16: "#f59563",
+		    32: "#f67c5f",
+		    64: "#f65e3b",
+		    128: "#edcf72",
+		    256: "#edcc61",
+		    512: "#edc850",
+		    1024: "#edc53f",
+		    2048: "#edc22e"
+		}
 
 	@staticmethod
 	def perform_move(l):
@@ -59,6 +73,7 @@ class Main:
 				tk.Label(
 				    self.root,
 				    text=self.board[i][j] if self.board[i][j] else None,
+					bg=self.color[self.board[i][j]],
 				    height=5,
 				    width=10,
 				    borderwidth=2,
@@ -75,8 +90,8 @@ class Main:
 		         for j in range(len(self.board)) if self.board[i][j] == 0
 		         ]  # Generate all possible rows and columns
 		if len(index) > 0:
-			index = random.choice(index)
-			self.board[index[0]][index[1]] = num
+			x, y = random.choice(index)
+			self.board[x][y] = num
 		else:
 			# Board is full
 			pass
