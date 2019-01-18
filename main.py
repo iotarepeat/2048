@@ -11,7 +11,7 @@ class Main:
 		self.puzzle = tk.Frame(self.root)
 		self.puzzle.grid()
 		self.color = {
-			0:"#fff",
+		    0: "#ccc",
 		    2: "#eee4da",
 		    4: "#ede0c8",
 		    8: "#f2b179",
@@ -30,9 +30,9 @@ class Main:
 		for i in range(3):
 			try:
 				l.remove(0)
+				l.append(0)
 			except ValueError:
 				break
-			l.append(0)
 		for ind, i in enumerate(l[:-1]):
 			n = l[1:] + [0]
 			if i == n[ind]:
@@ -44,30 +44,42 @@ class Main:
 		return l
 
 	def key(self, event):
-		prev_board = []
-		prev_board = self.board
+		'''
+			Perform move based on the key pressed
+		'''
+		prev_board = [i.copy() for i in self.board]
 		if event.keysym == "Left":
 			self.board = list(map(self.perform_move, self.board))
 
-		if event.keysym == "Right":
+		elif event.keysym == "Right":
 			self.board = list(
 			    map(lambda x: self.perform_move(x[::-1])[::-1], self.board))
-		if event.keysym == "Down":
+		elif event.keysym == "Down":
 			transpose = lambda l_of_l: [list(l) for l in zip(*l_of_l)]
 			self.board = list(
 			    map(lambda x: self.perform_move(x[::-1])[::-1],
 			        transpose(self.board)))
 			self.board = transpose(self.board)
 
-		if event.keysym == "Up":
+		elif event.keysym == "Up":
 			transpose = lambda l_of_l: [list(l) for l in zip(*l_of_l)]
 			self.board = list(map(self.perform_move, transpose(self.board)))
 			self.board = transpose(self.board)
+		
+		zero = False
 		for i, j in zip(prev_board, self.board):
+			if 0 in j:
+				zero = True
 			if i != j:
-				self.spawn()
+				self.spawn()#			If there's no change in the board,do not spawn
+
+				self.display()
 				break
-		self.display()
+		if not zero:
+			if not self.game_over(): # Check if any possible moves like left ,up or down can be performed
+				self.display()
+			else:
+				tk.Label(self.root, text="Game over").grid()
 
 	def display(self):
 		for i in range(len(self.board)):
@@ -75,13 +87,29 @@ class Main:
 				tk.Label(
 				    self.puzzle,
 				    text=self.board[i][j] if self.board[i][j] else None,
-					bg=self.color[self.board[i][j]],
+				    bg=self.color[self.board[i][j]],
 				    height=5,
 				    width=10,
 				    borderwidth=2,
 				    relief="ridge").grid(
 				        row=i, column=j)
 		self.puzzle.update()
+
+	def game_over(self):
+		for i in self.board:
+			prev = i[0]
+			for j in i[1:]:
+				if prev == j:
+					return False
+				prev = j
+		for i in list(zip(*self.board)):
+			prev = i[0]
+			for j in i[1:]:
+				if prev == j:
+					return False
+				prev = j
+		# self.puzzle.destroy()
+		return True
 
 	def spawn(self):
 		'''
