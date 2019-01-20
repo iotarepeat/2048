@@ -4,12 +4,14 @@ import random, time
 
 # board = [[0] * 4] * 4
 class Main:
+	board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+
 	def __init__(self):
-		self.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 		self.root = tk.Tk()
-		self.root.bind("<KeyPress>", self.key)
 		self.puzzle = tk.Frame(self.root)
 		self.puzzle.grid()
+		self.puzzle.bind("<KeyPress>", self.key)
+		self.puzzle.focus_set()
 		self.color = {
 		    0: "#ccc",
 		    2: "#eee4da",
@@ -65,21 +67,24 @@ class Main:
 			transpose = lambda l_of_l: [list(l) for l in zip(*l_of_l)]
 			self.board = list(map(self.perform_move, transpose(self.board)))
 			self.board = transpose(self.board)
-		
+
 		zero = False
 		for i, j in zip(prev_board, self.board):
 			if 0 in j:
 				zero = True
 			if i != j:
-				self.spawn()#			If there's no change in the board,do not spawn
+				self.spawn(
+				)  #			If there's no change in the board,do not spawn
 
 				self.display()
 				break
 		if not zero:
-			if not self.game_over(): # Check if any possible moves like left ,up or down can be performed
+			if not self.game_over(
+			):  # Check if any possible moves like left ,up or down can be performed
 				self.display()
 			else:
 				tk.Label(self.root, text="Game over").grid()
+				return False
 
 	def display(self):
 		for i in range(len(self.board)):
@@ -125,9 +130,3 @@ class Main:
 		else:
 			# Board is full
 			pass
-
-
-m = Main()
-m.spawn()
-m.display()
-m.root.mainloop()
