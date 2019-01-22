@@ -7,13 +7,14 @@ class Main:
 	board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 
 	def __init__(self):
+		self.prev_board = []
 		self.root = tk.Tk()
 		self.puzzle = tk.Frame(self.root)
 		for i in ["Left", "Right", "Up", "Down"]:
 			self.puzzle.bind("<" + i + ">", self.key)
+		self.puzzle.bind("<u>", self.undo)
 		self.puzzle.focus_set()
 		self.puzzle.grid()
-		self.puzzle.bind("<KeyPress>", self.key)
 		self.puzzle.focus_set()
 		self.color = {
 		    0: "#ccc",
@@ -29,6 +30,10 @@ class Main:
 		    1024: "#edc53f",
 		    2048: "#edc22e"
 		}
+
+	def undo(self, event):
+		self.board = [i.copy() for i in self.prev_board]
+		self.display()
 
 	@staticmethod
 	def perform_move(l):
@@ -88,7 +93,6 @@ class Main:
 			    map(lambda x: self.perform_move(x[::-1])[::-1],
 			        transpose(self.board)))
 			self.board = transpose(self.board)
-
 		'''
 			Check if any further moves are possible before
 			spawing
@@ -101,12 +105,13 @@ class Main:
 			if 0 in j:
 				zero = True
 			if i != j:
+				self.prev_board = prev_board
 				self.spawn()  #If there's change in the board spawn
 				self.display()
 				break
 		# Check if there are any empty squares
 		if not zero:
-		# Check if game is over  Check if any possible moves like left ,up or down can be performed
+			# Check if game is over  Check if any possible moves like left ,up or down can be performed
 			if not self.game_over():
 				self.display()
 			else:
@@ -161,3 +166,10 @@ class Main:
 		if len(index) > 0:
 			x, y = random.choice(index)
 			self.board[x][y] = num
+
+
+if __name__ == "__main__":
+	b = Main()
+	b.spawn()
+	b.display()
+	b.root.mainloop()
