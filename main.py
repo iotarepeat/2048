@@ -7,8 +7,10 @@ class Main:
 	def __init__(self):
 		self.board = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
 		self.root = tk.Tk()
-		self.root.bind("<KeyPress>", self.key)
 		self.puzzle = tk.Frame(self.root)
+		for i in ["Left","Right","Up","Down"]:
+			self.puzzle.bind("<"+i+">", self.key)
+		self.puzzle.focus_set()
 		self.puzzle.grid()
 		self.color = {
 		    0: "#ccc",
@@ -65,21 +67,24 @@ class Main:
 			transpose = lambda l_of_l: [list(l) for l in zip(*l_of_l)]
 			self.board = list(map(self.perform_move, transpose(self.board)))
 			self.board = transpose(self.board)
-		
+		m = 2
 		zero = False
 		for i, j in zip(prev_board, self.board):
+			m = max(m, *j)
 			if 0 in j:
 				zero = True
 			if i != j:
-				self.spawn()#			If there's no change in the board,do not spawn
-
+				self.spawn()  #If there's no change in the board,do not spawn
 				self.display()
 				break
 		if not zero:
-			if not self.game_over(): # Check if any possible moves like left ,up or down can be performed
+			if not self.game_over():  # Check if any possible moves like left ,up or down can be performed
 				self.display()
 			else:
-				tk.Label(self.root, text="Game over").grid()
+				self.root.focus_set()
+				tk.Label(
+				    self.root,
+				    text="Game Over  Your score is: " + str(m)).grid()
 
 	def display(self):
 		for i in range(len(self.board)):
@@ -108,7 +113,6 @@ class Main:
 				if prev == j:
 					return False
 				prev = j
-		# self.puzzle.destroy()
 		return True
 
 	def spawn(self):
@@ -122,9 +126,6 @@ class Main:
 		if len(index) > 0:
 			x, y = random.choice(index)
 			self.board[x][y] = num
-		else:
-			# Board is full
-			pass
 
 
 m = Main()
